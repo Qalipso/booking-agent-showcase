@@ -1,0 +1,92 @@
+{
+  "name": "Demo Salon",
+  "tagline": "A synthetic tenant for the portfolio snapshot",
+  "address": "100 Example Street, Example City",
+  "addressShort": "100 Example Street",
+  "whatsapp": "",
+  "instagram": "",
+  "googleMapsUrl": "",
+  "timezone": "America/Montevideo",
+  "phoneCountry": "598",
+  "workHours": {"start": "10:00", "end": "19:00"},
+  "workDays": [1, 2, 3, 4, 5, 6],
+  "slotStepMinutes": 30,
+  "gridStepMinutes": "15",
+  "bookingHorizonDays": 14,
+  "leadTimeMinutes": 120,
+  "loyaltyEnabled": false,
+  "loyaltyPercent": 0,
+  "services": [
+    {
+      "id": "consultation",
+      "title": "Consultation",
+      "titleEs": "Consulta",
+      "titleEn": "Consultation",
+      "duration": 60,
+      "price": "1000 UYU",
+      "priceAmount": 1000,
+      "currency": "UYU",
+      "groupCapacity": 1,
+      "resourceKind": "",
+      "desc": "Synthetic service used for local review.",
+      "descEs": "Servicio sintético para la revisión local.",
+      "descEn": "Synthetic service used for local review.",
+      "suggestWith": []
+    },
+    {
+      "id": "workshop",
+      "title": "Small-group workshop",
+      "titleEs": "Taller para grupos pequeños",
+      "titleEn": "Small-group workshop",
+      "duration": 90,
+      "price": "1500 UYU",
+      "priceAmount": 1500,
+      "currency": "UYU",
+      "groupCapacity": 4,
+      "resourceKind": "room",
+      "desc": "Demonstrates shared-capacity booking.",
+      "descEs": "Demuestra reservas con capacidad compartida.",
+      "descEn": "Demonstrates shared-capacity booking.",
+      "suggestWith": []
+    }
+  ],
+  "promotions": [],
+  "masters": [
+    {
+      "id": "alex",
+      "name": "Alex",
+      "role": "Consultant",
+      "roleEs": "Consultor",
+      "roleEn": "Consultant",
+      "services": ["consultation", "workshop"],
+      "workDays": [1, 2, 3, 4, 5],
+      "workHours": {"start": "10:00", "end": "19:00"},
+      "calendarId": "primary",
+      "commissionType": "percent",
+      "commissionValue": 40,
+      "locationId": "main",
+      "telegramChatId": "",
+      "shifts": {}
+    },
+    {
+      "id": "taylor",
+      "name": "Taylor",
+      "role": "Consultant",
+      "roleEs": "Consultor",
+      "roleEn": "Consultant",
+      "services": ["consultation"],
+      "workDays": [2, 3, 4, 5, 6],
+      "workHours": {"start": "11:00", "end": "18:00"},
+      "calendarId": "primary",
+      "commissionType": "percent",
+      "commissionValue": 40,
+      "locationId": "main",
+      "telegramChatId": "",
+      "shifts": {}
+    }
+  ],
+  "locations": [
+    {"id": "main", "name": "Main location", "address": "100 Example Street, Example City"}
+  ]
+}
+

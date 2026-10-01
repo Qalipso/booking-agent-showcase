@@ -1,0 +1,167 @@
+/* Shoelace в палитре Demo Salon.
+ *
+ * Компоненты Shoelace читают собственные переменные `--sl-*`. Здесь они
+ * связываются с токенами из tokens.css — своих цветов и размеров этот файл
+ * не вводит, иначе палитра начала бы жить в двух местах.
+ *
+ * Подключать после vendor/shoelace/light.css: он задаёт значения по умолчанию,
+ * мы переопределяем те, что видны в форме.
+ */
+
+:root,
+:host {
+  /* --- поверхности и текст --- */
+  --sl-panel-background-color: var(--c-surface);
+  --sl-panel-border-color: var(--c-line);
+  --sl-color-neutral-0: var(--c-surface);
+  --sl-color-neutral-950: var(--c-ink);
+  --sl-color-neutral-1000: var(--c-ink);
+
+  /* Серые Shoelace холодные — заменяем на тёплую шкалу бренда. */
+  --sl-color-neutral-50:  var(--c-surface-2);
+  --sl-color-neutral-100: var(--c-surface-sunk);
+  --sl-color-neutral-200: rgba(40, 35, 31, .10);
+  --sl-color-neutral-300: rgba(40, 35, 31, .18);
+  --sl-color-neutral-400: var(--c-ink-3);
+  --sl-color-neutral-500: var(--c-ink-2);
+  --sl-color-neutral-600: var(--c-ink-2);
+  --sl-color-neutral-700: var(--c-ink);
+  --sl-color-neutral-800: var(--c-ink);
+
+  /* --- акцент: терракота вместо синего --- */
+  --sl-color-primary-50:  var(--c-accent-soft);
+  --sl-color-primary-100: var(--c-accent-soft);
+  --sl-color-primary-200: var(--c-accent-line);
+  --sl-color-primary-300: var(--c-accent-line);
+  --sl-color-primary-400: var(--c-accent);
+  --sl-color-primary-500: var(--c-accent);
+  --sl-color-primary-600: var(--c-accent);
+  --sl-color-primary-700: var(--c-accent-strong);
+  --sl-color-primary-800: var(--c-accent-strong);
+  --sl-color-primary-900: var(--c-accent-strong);
+  --sl-color-primary-950: var(--c-accent-strong);
+
+  --sl-color-danger-600: var(--c-err);
+  --sl-color-success-600: var(--c-ok);
+  --sl-color-warning-600: var(--c-warn);
+
+  /* --- типографика --- */
+  --sl-font-sans: var(--font-ui);
+  --sl-font-mono: var(--font-mono);
+  --sl-font-size-small: var(--fs-xs);
+  --sl-font-size-medium: var(--fs-sm);
+  --sl-font-size-large: var(--fs-body);
+  --sl-font-weight-normal: 400;
+  --sl-font-weight-semibold: 500;
+  --sl-line-height-normal: var(--lh-body);
+
+  /* --- форма --- */
+  --sl-input-height-small: 34px;
+  --sl-input-height-medium: var(--tap);   /* 40px: минимальная зона нажатия */
+  --sl-input-height-large: 48px;
+
+  --sl-input-background-color: var(--c-surface);
+  --sl-input-background-color-hover: var(--c-surface);
+  --sl-input-background-color-focus: var(--c-surface);
+  --sl-input-background-color-disabled: var(--c-surface-sunk);
+
+  --sl-input-border-color: var(--c-line-strong);
+  --sl-input-border-color-hover: var(--c-ink-3);
+  --sl-input-border-color-focus: var(--c-accent);
+  --sl-input-border-color-disabled: var(--c-line);
+  --sl-input-border-width: 1px;
+
+  --sl-input-border-radius-small: var(--r-sm);
+  --sl-input-border-radius-medium: var(--r-md);
+  --sl-input-border-radius-large: var(--r-md);
+
+  --sl-input-color: var(--c-ink);
+  --sl-input-color-hover: var(--c-ink);
+  --sl-input-color-focus: var(--c-ink);
+  --sl-input-placeholder-color: var(--c-ink-3);
+  --sl-input-font-family: var(--font-ui);
+  --sl-input-font-size-medium: var(--fs-sm);
+  --sl-input-spacing-medium: var(--sp-3);
+
+  --sl-input-help-text-color: var(--c-ink-3);
+  --sl-input-help-text-font-size-medium: var(--fs-xs);
+  --sl-input-label-color: var(--c-ink-2);
+  --sl-input-label-font-size-medium: var(--fs-label);
+
+  --sl-input-focus-ring-color: rgba(217, 120, 85, .32);
+  --sl-input-focus-ring-offset: 0;
+  --sl-focus-ring: 0 0 0 3px var(--sl-input-focus-ring-color);
+  --sl-focus-ring-width: 3px;
+
+  --sl-toggle-size-medium: 23px;
+
+  /* --- прочее --- */
+  --sl-border-radius-medium: var(--r-md);
+  --sl-border-radius-large: var(--r-lg);
+  --sl-shadow-medium: var(--sh-sm);
+  --sl-shadow-large: var(--sh-lg);
+  --sl-transition-fast: var(--t-fast);
+  --sl-transition-medium: var(--t-base);
+  --sl-spacing-medium: var(--sp-4);
+  --sl-z-index-dropdown: 45;
+}
+
+/* Пока бандл не загрузился, нестилизованные пользовательские элементы
+   не должны мелькать голым текстом. */
+:not(:defined) { visibility: hidden; }
+
+/* --- подгонка под сетку формы ------------------------------------------- */
+
+sl-input, sl-textarea, sl-select { display: block; width: 100%; }
+
+/* Подпись поля оформлена как остальные: прописными, мелко, приглушённо. */
+sl-input::part(form-control-label),
+sl-textarea::part(form-control-label),
+sl-select::part(form-control-label) {
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+  margin-bottom: 6px;
+}
+sl-input::part(form-control-help-text),
+sl-textarea::part(form-control-help-text),
+sl-select::part(form-control-help-text) {
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+sl-textarea::part(textarea) { min-height: 92px; line-height: var(--lh-body); }
+
+/* Переключатель: текст рядом — обычная фраза, а не заголовок поля. */
+sl-switch { display: flex; align-items: flex-start; }
+sl-switch::part(base) { align-items: flex-start; font-size: var(--fs-sm); }
+sl-switch::part(control) { margin-top: 1px; }
+sl-switch::part(label) { line-height: var(--lh-body); }
+/* Подпись и подсказка — разными строками: слот переключателя выкладывает
+   вложенное содержимое в строку, и «…Manager» слипалось с «В проде…». */
+sl-switch > span { display: block; }
+sl-switch > .switch-hint {
+  display: block; margin-top: 2px;
+  color: var(--c-ink-3); font-size: var(--fs-xs); line-height: 1.5;
+}
+
+/* Обязательное поле помечается терракотовой звёздочкой, как и раньше.
+   Помечаем своим data-required, а не required: штатная валидация Shoelace
+   подсветила бы пустые поля красным ещё до попытки сохранения, тогда как
+   обязательность здесь проверяет сервер и показывает списком. */
+sl-input[data-required]::part(form-control-label)::after,
+sl-select[data-required]::part(form-control-label)::after,
+sl-textarea[data-required]::part(form-control-label)::after {
+  content: ' *';
+  color: var(--c-accent);
+}
+
+sl-select::part(combobox) { min-height: var(--tap); }
+sl-select::part(listbox) {
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-lg);
+  border-color: var(--c-line);
+}
+sl-option::part(base) { font-size: var(--fs-sm); }
+sl-option::part(checked-icon) { color: var(--c-accent); }

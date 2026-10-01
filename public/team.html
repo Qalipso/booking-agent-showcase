@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#E4D3B6">
+  <title>Кабинет мастера</title>
+  <link rel="stylesheet" href="/team.css">
+</head>
+<body>
+  <!-- Экран мастера: свои записи на день, неделю и месяц и свой график.
+       Всё рисует team.js, потому что до ответа сервера неизвестно даже имя —
+       кабинет открывается личной ссылкой, а не логином. Разметки здесь ровно
+       столько, чтобы страница не мигала пустотой на медленной сети. -->
+  <header class="top" id="top" hidden></header>
+  <main id="app">
+    <div class="wrap">
+      <div class="skeleton" style="margin-top:20px"></div>
+      <div class="skeleton"></div>
+    </div>
+  </main>
+  <nav class="tabs" id="tabs" hidden aria-label="Разделы"></nav>
+  <script src="/team.js"></script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+/* Кабинет мастера. Экран телефона, стоя, между клиентами — отсюда все решения:
+   крупные цели нажатия, один столбец, нижняя навигация под большой палец и
+   никаких таблиц. Палитра — салонная, та же, что у виджета и писем клиенту:
+   мастер попадает сюда по ссылке от владельца и должен узнать свой салон. */
+
+:root {
+  --sand: #EFE2CB;
+  --sand-deep: #E4D3B6;
+  --card: #FBF6ED;
+  --terra: #D97855;
+  --terra-soft: #F7E3D6;
+  --graphite: #292521;
+  --muted: #8A7660;
+  --line: rgba(41, 37, 33, .12);
+  --ok: #4F8A68;
+  --off: #B4553C;
+  --ease: cubic-bezier(.22, .9, .28, 1);
+  --bar: 68px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  min-height: 100svh;
+  background: var(--sand);
+  color: var(--graphite);
+  font: 16px/1.5 'DM Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(var(--bar) + env(safe-area-inset-bottom));
+  scroll-padding-top: 96px;
+}
+
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+a { color: inherit; }
+
+.wrap { width: min(680px, 100%); margin: 0 auto; padding: 0 14px; }
+
+/* ---------- шапка ---------- */
+.top {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--sand-deep);
+  border-bottom: 1px solid var(--line);
+  padding: max(10px, env(safe-area-inset-top)) 0 10px;
+}
+.top .wrap { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  background: var(--terra); color: #FFFDF8; font-weight: 600;
+}
+.who { min-width: 0; flex: 1; }
+.who b {
+  display: block; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px; font-weight: 500; line-height: 1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.who small { color: var(--muted); font-size: 13px; }
+.exit { color: var(--muted); font-size: 14px; padding: 8px; }
+
+/* ---------- переключатель дня/недели/месяца ---------- */
+.seg {
+  display: flex; gap: 4px; padding: 4px; margin: 14px 0;
+  background: rgba(41, 37, 33, .06); border-radius: 14px;
+}
+.seg button {
+  flex: 1; padding: 9px 4px; border-radius: 10px; font-size: 15px;
+  color: var(--muted); transition: background .18s var(--ease), color .18s var(--ease);
+}
+.seg button[aria-pressed="true"] {
+  background: var(--card); color: var(--graphite); font-weight: 600;
+  box-shadow: 0 2px 8px rgba(41, 37, 33, .08);
+}
+
+/* ---------- перемотка периода ---------- */
+.nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.nav button.arrow {
+  width: 42px; height: 42px; flex: none; border-radius: 12px;
+  background: var(--card); border: 1px solid var(--line); font-size: 20px; line-height: 1;
+}
+.nav .label { flex: 1; text-align: center; font-weight: 600; }
+.nav .label small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.nav button.today {
+  padding: 0 14px; height: 42px; border-radius: 12px; font-size: 14px;
+  background: var(--terra-soft); color: #9A4A2C;
+}
+
+/* ---------- карточки дня и записи ---------- */
+.day { margin-bottom: 18px; }
+.day > h3 {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 15px; font-weight: 600; margin: 0 4px 8px;
+}
+.day > h3 span { color: var(--muted); font-weight: 400; font-size: 13px; }
+.day > .empty:only-of-type { padding: 4px 4px 10px; }
+.day.rest > h3 { color: var(--muted); }
+
+.item {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 18px; padding: 14px; margin-bottom: 8px;
+  animation: rise .35s var(--ease) both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+.item .when { flex: none; width: 58px; font-weight: 600; }
+.item .when small { display: block; color: var(--muted); font-weight: 400; font-size: 13px; }
+.item .what { flex: 1; min-width: 0; }
+.item .what b { display: block; font-weight: 600; }
+.item .what .who-line { color: var(--muted); font-size: 14px; }
+.item .what .note {
+  margin-top: 6px; font-size: 14px; color: var(--graphite);
+  background: rgba(41, 37, 33, .05); border-radius: 10px; padding: 6px 9px;
+}
+.item .call {
+  flex: none; width: 40px; height: 40px; border-radius: 12px;
+  display: grid; place-items: center; background: var(--terra-soft); text-decoration: none;
+}
+.item.pause { background: rgba(41, 37, 33, .04); border-style: dashed; }
+.item.pause .what b { font-weight: 500; color: var(--muted); }
+.item.done { opacity: .62; }
+.tag {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+  font-size: 12px; background: var(--terra-soft); color: #9A4A2C; vertical-align: 1px;
+}
+
+.empty { color: var(--muted); font-size: 15px; padding: 10px 4px 14px; }
+.sum {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  padding: 12px 14px; margin-bottom: 14px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+}
+.sum div { flex: 1; min-width: 90px; }
+.sum b { display: block; font-size: 22px; font-family: 'Cormorant Garamond', Georgia, serif; }
+.sum small { color: var(--muted); font-size: 13px; }
+
+/* ---------- сетка месяца ---------- */
+.grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.grid .dow { text-align: center; font-size: 12px; color: var(--muted); padding-bottom: 2px; }
+.cell {
+  aspect-ratio: 1 / 1; border-radius: 14px; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  background: var(--card); border: 1px solid var(--line); font-size: 15px;
+}
+.cell.rest { background: rgba(41, 37, 33, .05); color: var(--muted); }
+.cell.off { background: rgba(180, 85, 60, .12); color: var(--off); }
+.cell.custom { border-color: var(--terra); }
+.cell.past { opacity: .45; }
+.cell.today { outline: 2px solid var(--terra); outline-offset: -2px; }
+.cell .dot {
+  width: 18px; height: 18px; border-radius: 50%; font-size: 11px;
+  display: grid; place-items: center; background: var(--terra); color: #FFFDF8;
+}
+.cell .hours { font-size: 10px; color: var(--muted); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 4px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 5px; vertical-align: -1px; }
+
+/* ---------- нижняя навигация ---------- */
+.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; background: var(--card); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  flex: 1; padding: 12px 4px calc(12px + env(safe-area-inset-bottom, 0px) * 0);
+  height: var(--bar); font-size: 12px; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+}
+.tabs button b { font-size: 20px; line-height: 1; font-weight: 400; }
+.tabs button[aria-pressed="true"] { color: var(--terra); font-weight: 600; }
+
+/* ---------- лист снизу ---------- */
+.sheet {
+  position: fixed; inset: 0; z-index: 40; display: grid; align-items: end;
+  background: rgba(41, 37, 33, .38); animation: fade .2s var(--ease) both;
+}
+@keyframes fade { from { opacity: 0; } }
+.sheet .panel {
+  background: var(--card); border-radius: 26px 26px 0 0;
+  padding: 20px 18px calc(22px + env(safe-area-inset-bottom));
+  animation: up .3s var(--ease) both;
+}
+@keyframes up { from { transform: translateY(24px); } }
+.sheet h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; font-weight: 500; }
+.sheet .sub { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+.choice {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 14px; margin-bottom: 8px; text-align: left;
+  background: var(--sand); border: 1px solid var(--line); border-radius: 16px;
+}
+.choice[aria-pressed="true"] { border-color: var(--terra); background: var(--terra-soft); }
+.choice b { display: block; }
+.choice small { color: var(--muted); font-size: 13px; }
+.times { display: flex; gap: 10px; margin: 4px 0 12px; }
+/* Правило нужно явно: `display:flex` сильнее браузерного `[hidden]`. Без него
+   поля времени оставались на экране в режиме «как обычно», а шапка с нижней
+   навигацией — на экране входа, где нажимать в них нечего. */
+.times[hidden], .tabs[hidden], .top[hidden] { display: none; }
+.times label { flex: 1; font-size: 13px; color: var(--muted); }
+.times input {
+  display: block; width: 100%; margin-top: 4px; padding: 12px;
+  font: inherit; color: inherit; background: var(--sand);
+  border: 1px solid var(--line); border-radius: 14px;
+}
+.row { display: flex; gap: 10px; margin-top: 6px; }
+.btn {
+  flex: 1; padding: 15px; border-radius: 16px; font-weight: 600;
+  background: var(--graphite); color: #FFFDF8;
+}
+.btn.ghost { background: var(--sand); color: var(--graphite); border: 1px solid var(--line); }
+.btn.danger { background: var(--off); color: #FFFDF8; }
+.btn[disabled] { opacity: .55; }
+.warn { color: var(--off); font-size: 14px; margin: 8px 0; }
+
+/* ---------- вход и заглушки ---------- */
+.gate { display: grid; place-items: center; min-height: 80svh; text-align: center; padding: 24px; }
+.gate .panel { max-width: 380px; }
+.gate h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; font-weight: 500; }
+.gate p { color: var(--muted); margin-top: 10px; }
+.gate .warn { color: var(--off); }
+
+.gate .salon { margin-top: 2px; font-size: 14px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.pin-box { display: block; margin: 14px 0; text-align: left; }
+.pin-box > span { display: block; margin-bottom: 6px; font-size: 13px; color: var(--muted); }
+
+/* Поле ПИНа: крупные редкие цифры, чтобы набранное было видно на вытянутой
+   руке, и клавиатура телефона сразу цифровая. */
+.pin {
+  display: block; width: 100%; margin: 0; padding: 16px;
+  font: 32px/1.2 'DM Sans', system-ui, sans-serif; letter-spacing: .5em;
+  text-align: center; text-indent: .5em; color: var(--graphite);
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+}
+.pin:focus { outline: 2px solid var(--terra); outline-offset: 2px; }
+.gate .btn { width: 100%; }
+.skeleton {
+  height: 74px; border-radius: 18px; margin-bottom: 8px;
+  background: linear-gradient(90deg, var(--card), var(--sand-deep), var(--card));
+  background-size: 200% 100%; animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(var(--bar) + 18px); transform: translateX(-50%);
+  z-index: 50; max-width: min(90vw, 420px);
+  background: var(--graphite); color: #FFFDF8; padding: 12px 18px; border-radius: 14px;
+  font-size: 14px; box-shadow: 0 12px 30px rgba(41, 37, 33, .3);
+  animation: rise .25s var(--ease) both;
+}
+.toast.bad { background: var(--off); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; }
+}

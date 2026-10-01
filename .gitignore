@@ -1,0 +1,46 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.env.generated
+*.pem
+*.key
+*-service-account*.json
+service-account*.json
+secrets/
+config/account.json
+
+# Runtime data and backups
+data/
+backups/
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
+
+# Environments and dependencies
+.venv/
+venv/
+env/
+node_modules/
+
+# Python tooling
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Editors, tools, and operating-system files
+.claude/
+.idea/
+.vscode/
+.DS_Store
+*.log
+*.tmp
+.vercel/
+

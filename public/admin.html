@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Demo Salon — панель управления</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/tokens.css">
+  <link rel="stylesheet" href="/vendor/shoelace/light.css">
+  <link rel="stylesheet" href="/admin/shoelace-theme.css">
+  <link rel="stylesheet" href="/vendor/flatpickr.min.css">
+  <link rel="stylesheet" href="/admin/app.css">
+</head>
+<body>
+  <a class="sr-only" href="#main">Перейти к содержимому</a>
+
+  <div class="shell" id="shell" hidden>
+    <!-- Левая навигация: разделы сгруппированы по задачам, а не свалены в ряд вкладок. -->
+    <nav class="sidebar" id="sidebar" aria-label="Разделы панели">
+      <div class="sidebar-head">
+        <div class="logo" id="brandLogo" aria-hidden="true">A</div>
+        <div class="who">
+          <b id="brandName">Demo Salon</b>
+          <small>панель управления</small>
+        </div>
+      </div>
+      <div class="nav" id="nav"></div>
+    </nav>
+
+    <!-- Затемнение под выезжающим меню: на телефоне видно, что фон неактивен. -->
+    <div class="nav-scrim" id="navScrim" hidden></div>
+
+    <main class="content" id="main">
+      <header class="topbar">
+        <button class="btn btn-icon burger" id="burger" type="button"
+                aria-label="Открыть меню разделов" aria-expanded="false" aria-controls="sidebar"></button>
+
+        <div class="where">
+          <b id="pageTitle">Расписание</b>
+          <small id="pageLede"></small>
+        </div>
+
+        <!-- Переключатель салона -->
+        <div class="picker">
+          <button class="picker-btn" id="tenantBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="name" id="tenantName">—</span>
+            <span class="code" id="tenantCode"></span>
+          </button>
+          <div class="menu" id="tenantMenu" role="menu"></div>
+        </div>
+
+        <div class="status-row" id="statuses" aria-label="Состояние интеграций"></div>
+
+        <div class="topbar-actions">
+          <span class="autosave" id="saveState" role="status" aria-live="polite"></span>
+          <button class="btn btn-primary" id="saveNow" type="button">Сохранить</button>
+          <div class="picker">
+            <button class="btn btn-icon" id="profileBtn" type="button"
+                    aria-label="Меню панели" aria-haspopup="menu" aria-expanded="false"></button>
+            <div class="menu right" id="profileMenu" role="menu"></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="page">
+        <div class="errors" id="errors" role="alert"></div>
+        <div id="panels"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Shoelace собран из нужных компонентов и лежит локально: панель не зависит от CDN. -->
+  <script type="module" src="/vendor/shoelace/shoelace.js"></script>
+  <script src="/vendor/chart.umd.min.js" defer></script>
+  <script src="/vendor/flatpickr.min.js" defer></script>
+  <script src="/vendor/flatpickr.ru.js" defer></script>
+  <script src="/vendor/motion.min.js" defer></script>
+  <script src="/admin/ui.js" defer></script>
+  <script src="/admin.js" defer></script>
+</body>
+</html>

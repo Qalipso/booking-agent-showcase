@@ -1,0 +1,157 @@
+/* Страницы по ссылке из уведомления: оценка визита, освободившееся место,
+   свои записи. Палитра — та же, что у виджета: клиент попадает сюда из
+   сообщения салона, и страница не должна выглядеть чужим сервисом.
+
+   Отдельный файл, а не разметка в Python: страницы, собранные экранированным
+   JS внутри f-строки, нельзя ни прочитать, ни перевести, ни поправить. */
+
+:root {
+  --sand: #EFE2CB;
+  --sand-deep: #E4D3B6;
+  --card: #FBF6ED;
+  --terra: #D97855;
+  --terra-soft: #F7E3D6;
+  --graphite: #292521;
+  --muted: #8A7660;
+  --line: rgba(41, 37, 33, .1);
+  --ok: #4F8A68;
+  --ease: cubic-bezier(.22, .9, .28, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100svh;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+  display: grid; place-items: start center;
+  background: var(--sand);
+  color: var(--graphite);
+  font: 16px/1.55 'DM Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.card {
+  width: min(560px, 100%);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  box-shadow: 0 18px 50px rgba(41, 37, 33, .10);
+  overflow: hidden;
+  animation: card-in .5s var(--ease) both;
+}
+@keyframes card-in { from { opacity: 0; transform: translateY(14px); } }
+
+/* ---------- шапка ---------- */
+.head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 22px;
+  background: var(--sand-deep);
+  border-bottom: 1px solid var(--line);
+}
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  background: var(--terra); color: #FFFDF8;
+  font-weight: 600; font-size: 17px;
+}
+.titles { min-width: 0; }
+.titles b {
+  display: block; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px; font-weight: 500; letter-spacing: .01em;
+}
+.titles small { color: var(--muted); font-size: 12.5px; }
+
+/* ---------- содержимое ---------- */
+.view { padding: 26px 22px; display: flex; flex-direction: column; gap: 16px; }
+.view > * { animation: step-in .34s var(--ease) both; }
+@keyframes step-in { from { opacity: 0; transform: translateY(8px); } }
+
+h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 27px; font-weight: 500; line-height: 1.2;
+}
+p { font-size: 15px; }
+.muted { color: var(--muted); font-size: 14px; }
+.error { color: #8c3b1c; }
+
+/* ---------- звёзды ---------- */
+.stars { display: flex; gap: 6px; }
+.stars button {
+  flex: 1; padding: 12px 0; font-size: 30px; line-height: 1;
+  background: transparent; border: 1px solid var(--line); border-radius: 14px;
+  color: var(--sand-deep); cursor: pointer;
+  transition: color .18s var(--ease), transform .18s var(--ease), border-color .18s var(--ease);
+}
+.stars button:hover, .stars button:focus-visible { color: var(--terra); transform: translateY(-3px); }
+/* Наведение на звезду подсвечивает все левее — оценка «четыре из пяти»,
+   а не «четвёртая звезда». */
+.stars button:hover ~ button, .stars button:focus-visible ~ button { color: var(--sand-deep); transform: none; }
+.stars.picked button { pointer-events: none; }
+.stars button[aria-pressed='true'] { color: var(--terra); border-color: var(--terra); }
+
+/* ---------- поля и кнопки ---------- */
+textarea {
+  width: 100%; min-height: 96px; padding: 13px 15px; resize: vertical;
+  font: inherit; font-size: 15px; color: inherit;
+  background: #fff; border: 1px solid var(--line); border-radius: 16px;
+}
+textarea:focus-visible { outline: 2px solid var(--terra); outline-offset: 1px; }
+
+button, .button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 20px; border: 0; border-radius: 16px;
+  font: inherit; font-size: 15px; font-weight: 500; text-decoration: none;
+  background: var(--graphite); color: var(--card); cursor: pointer;
+  transition: transform .16s var(--ease), opacity .16s var(--ease), background .2s var(--ease);
+}
+button:hover, .button:hover { transform: translateY(-2px); }
+button:active { transform: translateY(0) scale(.985); }
+button:disabled { opacity: .5; cursor: default; transform: none; }
+button.primary, .button.primary { background: var(--terra); }
+button.ghost, .button.ghost {
+  background: transparent; color: var(--graphite);
+  border: 1px solid var(--line); font-weight: 400;
+}
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.row > button, .row > .button { flex: 1 1 auto; }
+
+/* ---------- список записей ---------- */
+.item {
+  padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: #fff;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.item .when { font-size: 17px; font-weight: 500; }
+.item .what { color: var(--muted); font-size: 14px; }
+.badge {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 999px; font-size: 12px;
+  background: rgba(79, 138, 104, .13); color: var(--ok);
+}
+
+/* ---------- сетка выбора при переносе ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button {
+  padding: 10px 14px; font-size: 14px; font-weight: 400;
+  background: #fff; color: var(--graphite); border: 1px solid var(--line);
+}
+.chips button:hover { background: var(--terra-soft); border-color: var(--terra); }
+
+/* ---------- итог ---------- */
+.done { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 8px 0; }
+.done svg { width: 54px; height: 54px; }
+.done circle, .done path { stroke-dasharray: 160; stroke-dashoffset: 160; animation: draw .6s var(--ease) forwards; }
+.done path { animation-delay: .3s; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- подвал ---------- */
+.foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 22px; border-top: 1px solid var(--line); background: var(--sand-deep);
+}
+.foot a { font-size: 13px; padding: 8px 14px; }
+.foot small { text-align: right; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  button:hover, .button:hover, .stars button:hover { transform: none; }
+}

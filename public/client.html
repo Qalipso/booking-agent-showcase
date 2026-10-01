@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Онлайн-запись</title>
+  <link rel="stylesheet" href="/client.css">
+</head>
+<body>
+  <!-- Одна страница на три ссылки из уведомлений: /review/<id>, /waitlist/<id>,
+       /manage/<id>. Что показать, решает адрес — отдельные файлы разошлись бы
+       по стилю и языку уже на второй правке. -->
+  <main class="card" id="app">
+    <header class="head">
+      <div class="avatar" id="logo" aria-hidden="true">A</div>
+      <div class="titles">
+        <b id="salon">…</b>
+        <small id="tagline"></small>
+      </div>
+    </header>
+    <div id="view" class="view">
+      <p class="muted" id="boot">Загружаем…</p>
+    </div>
+    <footer class="foot">
+      <a id="wa" class="ghost" hidden target="_blank" rel="noopener"></a>
+      <small id="address" class="muted"></small>
+    </footer>
+  </main>
+  <script src="/client.js"></script>
+</body>
+</html>

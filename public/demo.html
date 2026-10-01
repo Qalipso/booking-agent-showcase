@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Salon — демо чат-виджета записи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root { --cream:#FFFDF8; --beige:#F5EFE6; --warm-black:#292521; --terracotta:#D97855; --sand:#E4D8C6; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cream); color: var(--warm-black); font-family: 'DM Sans', system-ui, sans-serif;
+           min-height: 100vh; display: grid; place-items: center; padding: 40px 24px; }
+    .wrap { max-width: 620px; text-align: center; }
+    .label { font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--terracotta); }
+    h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300;
+         font-size: clamp(2.6rem, 8vw, 4.4rem); line-height: 1.05; margin: 18px 0; }
+    p { color: #5a4a41; line-height: 1.75; }
+    .hint { margin-top: 34px; padding: 18px 22px; border: 1px dashed var(--sand); border-radius: 14px;
+            font-size: .86rem; color: #6b5a4e; }
+    code { background: #fff; padding: 2px 7px; border-radius: 5px; font-size: .82em; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="label">Демо-страница</span>
+    <h1>AREA <em>M<span style="font-style:italic;color:var(--terracotta)">O</span>SA</em></h1>
+    <p>Так виджет выглядит на реальном сайте. Нажмите круглую кнопку в правом нижнем углу — бот проведёт по услуге, мастеру, дате и времени и создаст событие в Google Calendar.</p>
+    <div class="hint">Встраивание на сайт: <code>&lt;script src="https://ваш-домен/widget.js" data-api="https://ваш-домен"&gt;&lt;/script&gt;</code></div>
+  </div>
+
+  <script src="/widget.js" data-api=""></script>
+</body>
+</html>

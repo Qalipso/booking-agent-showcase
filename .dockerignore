@@ -1,0 +1,40 @@
+# Всё, чему не место в образе: секреты, локальные данные, история, мусор сборки.
+.git/
+.github/
+.gitignore
+.claude/
+.venv/
+venv/
+env/
+node_modules/
+
+# Данные и конфигурации бизнесов приезжают томами, а не слоями образа.
+data/
+tenants/
+backups/
+
+# Секреты не должны попадать в слой даже случайно.
+.env
+.env.*
+.env.generated
+*.pem
+*.key
+*-service-account*.json
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Тесты и документация в рантайме не нужны — образ меньше, поверхность уже.
+backend/tests/
+docs/
+*.md
+
+.DS_Store
+*.log
+*.tmp

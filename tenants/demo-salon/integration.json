@@ -1,0 +1,63 @@
+{
+  "mode": "local",
+  "serviceAccountFile": "",
+  "impersonateUser": "",
+  "clientId": "",
+  "googleAccount": "",
+  "publicBaseUrl": "",
+  "ai": {
+    "enabled": false,
+    "provider": "openai",
+    "model": "gpt-4.1-mini",
+    "maxSteps": 8,
+    "timeoutSeconds": 30,
+    "language": "en",
+    "systemPrompt": "Be concise and helpful. Use only the provided tools for booking actions. Hand off unsupported or ambiguous requests to a person."
+  },
+  "channel": {"kind": "web", "allowedOrigins": ""},
+  "policies": {
+    "requireExplicitConfirmation": true,
+    "recheckSlotBeforeInsert": true,
+    "idempotencyEnabled": true,
+    "allowCancel": true,
+    "allowReschedule": false,
+    "maxBookingsPerPhonePerDay": 3,
+    "rateLimitPerMinute": 20,
+    "maskPiiInLogs": true,
+    "dataRetentionDays": 30,
+    "noShowLimit": 3,
+    "noShowWindowDays": 180,
+    "confirmationDeadlineHours": 4
+  },
+  "handoff": {
+    "autonomous": true,
+    "managerName": "",
+    "managerWhatsapp": "",
+    "adminName": "Demo operator",
+    "adminWhatsapp": "",
+    "adminEmail": "owner@example.com",
+    "telegramChatId": "",
+    "escalateOnCalendarError": true,
+    "escalateOnUnknownIntent": true,
+    "handoffMessage": "I am handing this request to a person who can help you."
+  },
+  "notifications": {
+    "ownerProvider": "console",
+    "enabled": true,
+    "provider": "console",
+    "clientChannel": "whatsapp",
+    "language": "en",
+    "smsFallback": true,
+    "dayBeforeAt": "19:00",
+    "sameDayHours": 3,
+    "sameDayNotBefore": "09:00"
+  },
+  "sales": {
+    "upsellEnabled": false,
+    "upsellMoment": "after_booking",
+    "upsellMaxPerDialog": 0,
+    "fillGaps": false,
+    "upsellNote": ""
+  }
+}
+

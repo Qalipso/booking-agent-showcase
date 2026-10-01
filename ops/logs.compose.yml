@@ -1,0 +1,25 @@
+# Сбор логов — отдельным файлом, а не сервисом в основном compose.
+#
+# Coolify собирает свой compose из нашего и профили `profiles:` при этом не
+# соблюдает: агент поднялся бы вместе с остальными сервисами, не нашёл токена
+# и ушёл в цикл перезапусков — на машине с одним ядром это заметно всем.
+# Отдельный файл Coolify не видит вовсе, а поднимается он одной командой:
+#
+#   docker compose -f ops/logs.compose.yml up -d
+#
+# Подробности и запросы к собранным логам — docs/LOGS.md.
+
+services:
+  logs:
+    image: timberio/vector:0.57.0-alpine
+    container_name: booking-logs
+    restart: unless-stopped
+    environment:
+      AXIOM_TOKEN: ${AXIOM_TOKEN:?нужен токен Axiom с правом записи}
+      AXIOM_DATASET: ${AXIOM_DATASET:-booking}
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-booking}
+    volumes:
+      - ../ops/vector.toml:/etc/vector/vector.toml:ro
+      # Сокет докера только на чтение: агент читает логи, а не управляет машиной.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: ["--config", "/etc/vector/vector.toml"]

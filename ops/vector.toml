@@ -1,0 +1,41 @@
+# Сбор логов с этого сервера в Axiom.
+#
+# Логи контейнера живут в файле рядом с ним и исчезают вместе с контейнером —
+# при каждом деплое история обнуляется. Пока прод падал на записи, причину
+# пришлось искать по `docker logs` вручную, и хватило её ровно до перезапуска.
+#
+# Vector читает поток docker и отправляет наружу. Он выбран за вес: на машине
+# одно ядро, которое уже делится с чужим приложением, и агент здесь может
+# позволить себе десятки мегабайт, но не сотни.
+
+[sources.docker]
+type = "docker_logs"
+# Чужое приложение на этой же машине в наш сбор не попадает.
+include_labels = ["com.docker.compose.project=${COMPOSE_PROJECT_NAME:-booking}"]
+
+[transforms.parsed]
+type = "remap"
+inputs = ["docker"]
+source = '''
+# Строки событий (`event=booking.created …`) разбираем на поля: по ним потом
+# строятся выборки «сколько записей за день» без регулярок в запросе.
+#
+# Режем строку по первому `event=`: перед ним стоит префикс логгера с датой и
+# уровнем, и парсер logfmt превращал его в поля-пустышки вроде «INFO: true».
+msg = string!(.message)
+at = int!(find(msg, "event="))
+if at >= 0 {
+  parsed, err = parse_logfmt(slice!(msg, at))
+  if err == null { . = merge(., parsed) }
+}
+.service = .container_name
+'''
+
+[sinks.axiom]
+type = "axiom"
+inputs = ["parsed"]
+dataset = "${AXIOM_DATASET:-booking}"
+token = "${AXIOM_TOKEN}"
+# Отправляем пачками: на одном ядре сеть дёргать на каждую строку незачем.
+[sinks.axiom.batch]
+timeout_secs = 5

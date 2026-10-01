@@ -1,0 +1,151 @@
+# Продовый контур: база, API, воркер уведомлений, бэкапы.
+#
+# Наружу торчит только api — Coolify сам вешает домен и TLS на его порт.
+# Postgres портов не публикует: база доступна лишь по внутренней сети compose.
+#
+# Все секреты берутся из окружения (Coolify → Environment Variables) и в этом
+# файле не хранятся. Обязательный минимум: POSTGRES_PASSWORD, ADMIN_TOKEN.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-booking}
+      POSTGRES_USER: ${POSTGRES_USER:-booking}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в окружении}
+      # Здоровая база важнее скорости записи: fsync не отключаем.
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # Зависимые сервисы стартуют только после реальной готовности базы.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-booking} -d ${POSTGRES_DB:-booking}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  migrate:
+    build: .
+    # Одноразовый сервис: схему приводит в порядок ровно один процесс.
+    # Если бы миграции запускал сам API, две его реплики мигрировали бы
+    # одну базу параллельно.
+    command: ["python", "-m", "backend.app.migrate"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-booking}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-booking}
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      # Приложение стартует только после успешных миграций: на схеме, которой
+      # не соответствует код, оно всё равно откажется работать.
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-booking}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-booking}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?задайте ADMIN_TOKEN — иначе админка отключена}
+      # Подпись слотов: при смене ключа ранее выданные токены перестают работать.
+      SLOT_SIGNING_KEY: ${SLOT_SIGNING_KEY:?задайте SLOT_SIGNING_KEY}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://demo-salon.vercel.app}
+      # Куда ведут ссылки из сообщений клиенту. Не задана — сервис запомнит адрес
+      # сам, когда владелец откроет панель по рабочему домену.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      # Адрес кабинета мастера. Не задан — ссылки мастерам ведут на `/team`
+      # рабочего домена; поддомен подставляется сюда, когда он заведён.
+      TEAM_BASE_URL: ${TEAM_BASE_URL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      WHATSAPP_TOKEN: ${WHATSAPP_TOKEN:-}
+      WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN:-}
+      PORT: 8080
+    volumes:
+      # Конфигурации бизнесов правит админ-форма — они переживают пересборку образа.
+      - tenants:/app/tenants
+    # Порт наружу не публикуем: за реверс-прокси (Coolify/Traefik) он не нужен,
+    # а на хосте занят самим прокси — деплой падал бы с «port is already
+    # allocated». Локальный доступ даёт docker-compose.override.yml.
+    expose:
+      - "8080"
+
+  worker:
+    build: .
+    restart: unless-stopped
+    # Отдельный процесс: деплой API не должен ронять очередь напоминаний,
+    # а долгая отправка — занимать поток веб-сервера.
+    command: ["python", "-m", "backend.app.worker"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-booking}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-booking}
+      SLOT_SIGNING_KEY: ${SLOT_SIGNING_KEY}
+      # Ссылки в сообщениях собирает воркер: заголовков запроса у него нет,
+      # поэтому адрес — из переменной либо из настроек бизнеса в общем томе.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      NOTIFY_TICK_SECONDS: ${NOTIFY_TICK_SECONDS:-30}
+    volumes:
+      # Воркеру нужны те же настройки бизнесов — шаблоны и таймзоны берутся оттуда.
+      - tenants:/app/tenants
+    healthcheck:
+      # Живой процесс — ещё не работающий воркер: проверяем свежесть отметки,
+      # которую он ставит каждый проход очереди.
+      test: ["CMD-SHELL", "python -c \"import os,sys,time; p='/tmp/notify-worker.alive'; sys.exit(0 if os.path.exists(p) and time.time()-os.path.getmtime(p) < 3*int(os.getenv('NOTIFY_TICK_SECONDS','30'))+30 else 1)\""]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  backup:
+    # Тот же образ, что у API: скрипт бэкапа и pg_dump уже внутри. Раньше здесь
+    # был postgres:16-alpine со скриптом, примонтированным из ./ops — но каталог
+    # с исходниками живёт только во время сборки, и в проде сервис уходил
+    # в цикл перезапусков с «can't open /usr/local/bin/ops/backup.sh».
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGDATABASE: ${POSTGRES_DB:-booking}
+      PGUSER: ${POSTGRES_USER:-booking}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      BACKUP_INTERVAL_HOURS: ${BACKUP_INTERVAL_HOURS:-24}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - backups:/backups
+      # Конфигурации бизнесов тоже входят в бэкап: без них дамп базы бесполезен.
+      - tenants:/tenants:ro
+    entrypoint: ["/bin/sh", "/app/ops/backup.sh"]
+    healthcheck:
+      # Своя проверка вместо унаследованной из образа: та дёргает HTTP /health,
+      # которого здесь нет — сервис молча числился бы «unhealthy». Здоровье
+      # бэкапов — это свежая копия на диске, а не открытый порт. Запас в 2 часа
+      # покрывает время самого дампа и перезапуск контейнера.
+      test: ["CMD-SHELL", "find /backups -name 'booking-*.sql.gz' -mmin -$$(( ${BACKUP_INTERVAL_HOURS:-24} * 60 + 120 )) | grep -q ."]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 2m
+
+volumes:
+  db-data:
+  tenants:
+  backups:

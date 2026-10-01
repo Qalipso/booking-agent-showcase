@@ -1,0 +1,1423 @@
+{
+  "version": 1,
+  "sections": [
+    {
+      "id": "salon",
+      "file": "salon.json",
+      "title": "Салон",
+      "hint": "Общие данные, которые бот показывает клиенту и использует в расписании.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Название",
+          "type": "text",
+          "required": true,
+          "placeholder": "Demo Salon"
+        },
+        {
+          "key": "tagline",
+          "label": "Слоган",
+          "type": "text",
+          "placeholder": "Hair · Color · Atmosphere"
+        },
+        {
+          "key": "address",
+          "label": "Адрес",
+          "type": "text",
+          "required": true,
+          "placeholder": "Кордон, Монтевидео"
+        },
+        {
+          "key": "addressShort",
+          "label": "Адрес в сообщениях",
+          "type": "text",
+          "placeholder": "100 Example Street",
+          "hint": "Короткая форма для WhatsApp: улица с домом, без индекса и города. Пусто — берётся начало полного адреса, до первой запятой."
+        },
+        {
+          "key": "whatsapp",
+          "label": "Ссылка WhatsApp",
+          "type": "url",
+          "placeholder": "https://wa.me/59899000101"
+        },
+        {
+          "key": "instagram",
+          "label": "Ссылка Instagram",
+          "type": "url",
+          "placeholder": "https://instagram.com/demo_salon"
+        },
+        {
+          "key": "googleMapsUrl",
+          "label": "Ссылка «оставить отзыв»",
+          "type": "url",
+          "placeholder": "https://g.page/r/demo-salon/review",
+          "hint": "Куда ведёт клиент после оценки 5 из 5. Пусто — после оценки просто скажем спасибо."
+        },
+        {
+          "key": "timezone",
+          "label": "Часовой пояс",
+          "type": "select",
+          "required": true,
+          "options": [
+            "America/Montevideo",
+            "America/Argentina/Buenos_Aires",
+            "America/Sao_Paulo",
+            "Europe/Madrid",
+            "Europe/Lisbon",
+            "Europe/Moscow",
+            "Asia/Tbilisi",
+            "Asia/Dubai"
+          ],
+          "default": "America/Montevideo"
+        },
+        {
+          "key": "phoneCountry",
+          "label": "Код страны для телефонов",
+          "type": "text",
+          "default": "598",
+          "placeholder": "598",
+          "hint": "Клиенты вводят номер по-местному, без кода. Без него Twilio отвергает номер, подтверждение не уходит, а один и тот же человек получает две карточки клиента."
+        },
+        {
+          "key": "workHours.start",
+          "label": "Открытие",
+          "type": "time",
+          "required": true,
+          "default": "11:00"
+        },
+        {
+          "key": "workHours.end",
+          "label": "Закрытие",
+          "type": "time",
+          "required": true,
+          "default": "20:00"
+        },
+        {
+          "key": "workDays",
+          "label": "Рабочие дни салона",
+          "type": "weekdays",
+          "required": true,
+          "default": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "key": "slotStepMinutes",
+          "label": "Шаг сетки, мин",
+          "type": "number",
+          "min": 5,
+          "max": 120,
+          "default": 30,
+          "required": true
+        },
+        {
+          "key": "gridStepMinutes",
+          "label": "Деления в журнале, мин",
+          "type": "select",
+          "options": [
+            "5",
+            "10",
+            "15",
+            "30"
+          ],
+          "default": "15",
+          "hint": "Насколько мелко разлинован журнал расписания. Это не шаг записи: окна клиенту предлагаются по «Шагу сетки» выше."
+        },
+        {
+          "key": "bookingHorizonDays",
+          "label": "Горизонт записи, дней",
+          "type": "number",
+          "min": 1,
+          "max": 90,
+          "default": 14,
+          "required": true
+        },
+        {
+          "key": "leadTimeMinutes",
+          "label": "Минимум до записи, мин",
+          "type": "number",
+          "min": 0,
+          "max": 1440,
+          "default": 120,
+          "required": true,
+          "hint": "Насколько заранее клиент может занять ближайшее окно. По умолчанию 2 часа — мастеру нужно время доехать и подготовиться."
+        },
+        {
+          "key": "loyaltyEnabled",
+          "label": "Программа лояльности",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "key": "loyaltyPercent",
+          "label": "Кэшбэк баллами, %",
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "default": 5
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "file": "salon.json",
+      "path": "services",
+      "title": "Услуги",
+      "hint": "То, что бот предлагает первым шагом. Длительность определяет сетку слотов.",
+      "kind": "list",
+      "itemLabel": "Услуга",
+      "idField": "id",
+      "fields": [
+        {
+          "key": "id",
+          "label": "Код",
+          "type": "slug",
+          "required": true,
+          "placeholder": "haircut",
+          "hint": "Латиницей, без пробелов."
+        },
+        {
+          "key": "title",
+          "label": "Название",
+          "type": "text",
+          "required": true,
+          "placeholder": "Стрижка"
+        },
+        {
+          "key": "titleEs",
+          "label": "Название по-испански",
+          "type": "text",
+          "hint": "Пусто — клиенту покажется русское название.",
+          "placeholder": "Corte de caballero"
+        },
+        {
+          "key": "titleEn",
+          "label": "Название по-английски",
+          "type": "text",
+          "placeholder": "Men's haircut"
+        },
+        {
+          "key": "duration",
+          "label": "Длительность, мин",
+          "type": "number",
+          "min": 10,
+          "max": 600,
+          "required": true,
+          "default": 60
+        },
+        {
+          "key": "price",
+          "label": "Цена (текстом)",
+          "type": "text",
+          "placeholder": "от 900 UYU"
+        },
+        {
+          "key": "priceEs",
+          "label": "Цена по-испански",
+          "type": "text",
+          "hint": "Заполняйте, если в цене есть слова: «(скидка 20%)» клиент-испанец не прочитает.",
+          "placeholder": "800 UYU (20% de descuento)"
+        },
+        {
+          "key": "priceEn",
+          "label": "Цена по-английски",
+          "type": "text",
+          "placeholder": "800 UYU (20% off)"
+        },
+        {
+          "key": "priceAmount",
+          "label": "Цена для учёта",
+          "type": "number",
+          "min": 0,
+          "default": 0,
+          "hint": "Целая сумма в минимальных единицах валюты. Для UYU — песо."
+        },
+        {
+          "key": "currency",
+          "label": "Валюта",
+          "type": "select",
+          "default": "UYU",
+          "options": [
+            "UYU",
+            "USD",
+            "EUR",
+            "RUB"
+          ]
+        },
+        {
+          "key": "groupCapacity",
+          "label": "Мест в одной записи",
+          "type": "number",
+          "min": 1,
+          "max": 100,
+          "default": 1,
+          "hint": "1 — обычный визит; больше — групповая услуга."
+        },
+        {
+          "key": "resourceKind",
+          "label": "Нужный ресурс",
+          "type": "text",
+          "placeholder": "chair",
+          "hint": "Пусто — ресурс не нужен. Код типа должен совпадать с ресурсами в разделе «Платформа»."
+        },
+        {
+          "key": "desc",
+          "label": "Описание",
+          "type": "textarea",
+          "placeholder": "Короткое пояснение для клиента"
+        },
+        {
+          "key": "descEs",
+          "label": "Описание по-испански",
+          "type": "textarea"
+        },
+        {
+          "key": "descEn",
+          "label": "Описание по-английски",
+          "type": "textarea"
+        },
+        {
+          "key": "suggestWith",
+          "label": "Предлагать вместе с этой услугой",
+          "type": "serviceRefs",
+          "hint": "Бот упомянет это один раз, если клиент записался на эту услугу."
+        }
+      ]
+    },
+    {
+      "id": "promotions",
+      "file": "salon.json",
+      "path": "promotions",
+      "title": "Промокоды",
+      "hint": "Коды из рекламы и их скидки. Использование сохраняется в записи.",
+      "kind": "list",
+      "required": false,
+      "itemLabel": "Промокод",
+      "idField": "code",
+      "fields": [
+        {
+          "key": "code",
+          "label": "Код",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "kind",
+          "label": "Тип скидки",
+          "type": "select",
+          "default": "percent",
+          "options": [
+            {
+              "value": "percent",
+              "label": "Процент"
+            },
+            {
+              "value": "amount",
+              "label": "Сумма"
+            }
+          ]
+        },
+        {
+          "key": "value",
+          "label": "Размер скидки",
+          "type": "number",
+          "min": 0,
+          "required": true
+        },
+        {
+          "key": "firstVisitOnly",
+          "label": "Только первый визит",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "key": "active",
+          "label": "Активен",
+          "type": "bool",
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "masters",
+      "file": "salon.json",
+      "path": "masters",
+      "title": "Мастера",
+      "hint": "У каждого — свой Google-календарь и свои рабочие дни.",
+      "kind": "list",
+      "itemLabel": "Мастер",
+      "idField": "id",
+      "fields": [
+        {
+          "key": "id",
+          "label": "Код",
+          "type": "slug",
+          "required": true,
+          "placeholder": "alex"
+        },
+        {
+          "key": "name",
+          "label": "Имя",
+          "type": "text",
+          "required": true,
+          "placeholder": "Alex"
+        },
+        {
+          "key": "role",
+          "label": "Специализация",
+          "type": "text",
+          "placeholder": "Основатель, стрижка и цвет"
+        },
+        {
+          "key": "roleEs",
+          "label": "Специализация по-испански",
+          "type": "text",
+          "hint": "Пусто — клиенту покажется русская.",
+          "placeholder": "Estilista y colorista"
+        },
+        {
+          "key": "roleEn",
+          "label": "Специализация по-английски",
+          "type": "text",
+          "placeholder": "Stylist and colourist"
+        },
+        {
+          "key": "services",
+          "label": "Какие услуги делает",
+          "type": "serviceRefs",
+          "required": true
+        },
+        {
+          "key": "workDays",
+          "label": "Рабочие дни",
+          "type": "weekdays",
+          "required": true,
+          "default": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "key": "workHours.start",
+          "label": "Начало смены",
+          "type": "hidden",
+          "managedOutsideForm": true,
+          "hint": "Заполняется отдельным экраном графика мастеров. Пусто — как у салона."
+        },
+        {
+          "key": "workHours.end",
+          "label": "Конец смены",
+          "type": "hidden",
+          "managedOutsideForm": true,
+          "hint": "Заполняется отдельным экраном графика мастеров. Пусто — как у салона."
+        },
+        {
+          "key": "calendarId",
+          "label": "ID Google-календаря",
+          "type": "text",
+          "required": true,
+          "default": "primary",
+          "hint": "primary или адрес вида ...@group.calendar.google.com"
+        },
+        {
+          "key": "commissionType",
+          "label": "Комиссия мастера",
+          "type": "select",
+          "default": "percent",
+          "options": [
+            {
+              "value": "percent",
+              "label": "Процент"
+            },
+            {
+              "value": "fixed",
+              "label": "Фикс за визит"
+            }
+          ]
+        },
+        {
+          "key": "commissionValue",
+          "label": "Размер комиссии",
+          "type": "number",
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "locationId",
+          "label": "Филиал",
+          "type": "text",
+          "default": "main",
+          "hint": "Код main для основной точки или ID филиала из раздела «Платформа»."
+        },
+        {
+          "key": "telegramChatId",
+          "label": "Telegram-чат мастера",
+          "type": "hidden",
+          "managedOutsideForm": true,
+          "hint": "Заполняется кнопкой «Привязать Telegram» — мастер открывает ссылку и нажимает «Начать»."
+        },
+        {
+          "key": "shifts",
+          "label": "Разовые изменения графика",
+          "type": "hidden",
+          "managedOutsideForm": true,
+          "default": {},
+          "hint": "Заполняется отдельным экраном графика мастеров."
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "file": "integration.json",
+      "title": "Google Calendar",
+      "hint": "Подключается входом в Google — Client ID, Secret и refresh token сервис сохраняет сам. Календарь меняет только backend, модель к нему доступа не имеет.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "mode",
+          "label": "Способ подключения",
+          "type": "hidden",
+          "required": true,
+          "default": "local"
+        },
+        {
+          "key": "serviceAccountFile",
+          "label": "Путь к JSON-ключу",
+          "type": "text",
+          "showIf": {
+            "mode": "service_account"
+          },
+          "placeholder": "/secrets/service-account.json"
+        },
+        {
+          "key": "impersonateUser",
+          "label": "Пользователь для делегирования",
+          "type": "text",
+          "showIf": {
+            "mode": "service_account"
+          },
+          "placeholder": "salon@yourdomain.com",
+          "hint": "Только для Google Workspace с domain-wide delegation."
+        },
+        {
+          "key": "clientId",
+          "label": "Client ID",
+          "type": "hidden"
+        },
+        {
+          "key": "clientSecret",
+          "label": "Client Secret",
+          "type": "hidden"
+        },
+        {
+          "key": "refreshToken",
+          "label": "Refresh Token",
+          "type": "hidden"
+        },
+        {
+          "key": "googleAccount",
+          "label": "Подключённый аккаунт",
+          "type": "hidden"
+        },
+        {
+          "key": "clientBaseUrl",
+          "label": "Домен ссылок для клиента",
+          "type": "text",
+          "placeholder": "https://bookings.example.com",
+          "hint": "Куда ведут ссылки и кнопки в сообщениях клиенту. Заполнять, если панель открывается по другому домену: иначе клиент получает ссылку на админский. Домен зашит в утверждённые шаблоны WhatsApp — смена требует их пересоздания."
+        },
+        {
+          "key": "publicBaseUrl",
+          "type": "hidden",
+          "label": "Публичный адрес сервиса",
+          "hint": "Куда ведут ссылки из сообщений клиенту. Сервис запоминает его сам, когда панель открывают по рабочему домену; переменная PUBLIC_BASE_URL перекрывает."
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "file": "integration.json",
+      "path": "ai",
+      "title": "AI-диалог",
+      "hint": "Модель только ведёт разговор и вызывает четыре инструмента: get_free_slots, create_booking, cancel_booking, handoff_to_human.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "enabled",
+          "label": "Включить AI-диалог",
+          "type": "hidden",
+          "default": false
+        },
+        {
+          "key": "provider",
+          "label": "Провайдер",
+          "type": "hidden",
+          "default": "groq"
+        },
+        {
+          "key": "model",
+          "label": "Модель",
+          "type": "hidden",
+          "default": "llama-3.3-70b-versatile"
+        },
+        {
+          "key": "apiKey",
+          "label": "API-ключ",
+          "type": "hidden"
+        },
+        {
+          "key": "maxSteps",
+          "label": "Максимум шагов агента",
+          "type": "number",
+          "min": 1,
+          "max": 30,
+          "default": 8,
+          "showIf": {
+            "enabled": true
+          }
+        },
+        {
+          "key": "timeoutSeconds",
+          "label": "Таймаут ответа, сек",
+          "type": "number",
+          "min": 5,
+          "max": 120,
+          "default": 30,
+          "showIf": {
+            "enabled": true
+          }
+        },
+        {
+          "key": "language",
+          "label": "Язык диалога",
+          "type": "select",
+          "default": "ru",
+          "showIf": {
+            "enabled": true
+          },
+          "options": [
+            {
+              "value": "ru",
+              "label": "Русский"
+            },
+            {
+              "value": "es",
+              "label": "Español"
+            },
+            {
+              "value": "en",
+              "label": "English"
+            },
+            {
+              "value": "auto",
+              "label": "Определять автоматически"
+            }
+          ]
+        },
+        {
+          "key": "systemPrompt",
+          "label": "Тон и правила общения",
+          "type": "textarea",
+          "showIf": {
+            "enabled": true
+          },
+          "placeholder": "Ты администратор салона Demo Salon. Отвечай коротко и тепло. Никогда не подтверждай запись, пока backend не вернул event_id."
+        },
+        {
+          "key": "voiceTranscription",
+          "label": "Голосовые сообщения",
+          "type": "select",
+          "default": "auto",
+          "showIf": {
+            "enabled": true
+          },
+          "hint": "Клиент диктует голосом — бот расшифровывает и отвечает как на текст. Умеют Groq и OpenAI, ключ берётся тот же, что у диалога. У остальных провайдеров бот попросит написать текстом.",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Расшифровывать"
+            },
+            {
+              "value": "off",
+              "label": "Не расшифровывать"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "channel",
+      "file": "integration.json",
+      "path": "channel",
+      "title": "Канал общения",
+      "hint": "На старте — один канал. WhatsApp подключается после того, как web-чат стабильно работает.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "kind",
+          "label": "Активный канал",
+          "type": "select",
+          "required": true,
+          "default": "web",
+          "options": [
+            {
+              "value": "web",
+              "label": "Web-виджет на сайте"
+            },
+            {
+              "value": "whatsapp",
+              "label": "WhatsApp Business API"
+            }
+          ]
+        },
+        {
+          "key": "allowedOrigins",
+          "label": "Разрешённые домены сайта",
+          "type": "text",
+          "showIf": {
+            "kind": "web"
+          },
+          "placeholder": "https://demo-salon.vercel.app",
+          "hint": "Через запятую. Пусто — разрешены все (только для разработки)."
+        },
+        {
+          "key": "whatsappPhoneId",
+          "label": "Phone number ID",
+          "type": "text",
+          "showIf": {
+            "kind": "whatsapp"
+          },
+          "hint": "Meta for Developers → ваше приложение → WhatsApp → API Setup."
+        },
+        {
+          "key": "whatsappToken",
+          "label": "Access token",
+          "type": "secret",
+          "showIf": {
+            "kind": "whatsapp"
+          },
+          "hint": "Там же, в API Setup. Временный живёт 24 часа; постоянный — через System User."
+        },
+        {
+          "key": "whatsappVerifyToken",
+          "label": "Webhook verify token",
+          "type": "secret",
+          "showIf": {
+            "kind": "whatsapp"
+          },
+          "hint": "Придумайте сами любую строку (например, openssl rand -hex 16) и впишите её же в Meta → Configuration → Webhook."
+        }
+      ]
+    },
+    {
+      "id": "policies",
+      "file": "integration.json",
+      "path": "policies",
+      "title": "Правила и защита",
+      "hint": "Эти ограничения проверяет код, а не промпт.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "requireExplicitConfirmation",
+          "label": "Требовать явное подтверждение клиента",
+          "type": "bool",
+          "default": true,
+          "hint": "Без «да, подтверждаю» календарь не меняется."
+        },
+        {
+          "key": "recheckSlotBeforeInsert",
+          "label": "Перепроверять слот перед созданием",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "idempotencyEnabled",
+          "label": "Idempotency key на создание записи",
+          "type": "bool",
+          "default": true,
+          "hint": "Повторный запрос не создаёт вторую запись."
+        },
+        {
+          "key": "allowCancel",
+          "label": "Разрешить отмену через бота",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "allowReschedule",
+          "label": "Разрешить перенос через бота",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "key": "maxBookingsPerPhonePerDay",
+          "label": "Лимит записей на телефон в сутки",
+          "type": "number",
+          "min": 1,
+          "max": 20,
+          "default": 3
+        },
+        {
+          "key": "rateLimitPerMinute",
+          "label": "Лимит сообщений в минуту",
+          "type": "number",
+          "min": 1,
+          "max": 120,
+          "default": 20
+        },
+        {
+          "key": "maskPiiInLogs",
+          "label": "Маскировать телефоны и email в логах",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "dataRetentionDays",
+          "label": "Хранить диалоги, дней",
+          "type": "number",
+          "min": 1,
+          "max": 3650,
+          "default": 180
+        },
+        {
+          "key": "noShowLimit",
+          "label": "Неявок до подтверждения",
+          "type": "number",
+          "min": 0,
+          "max": 10,
+          "default": 3,
+          "hint": "После стольких неявок бот просит клиента подтвердить визит заранее. 0 — не учитывать."
+        },
+        {
+          "key": "noShowWindowDays",
+          "label": "Окно учёта неявок, дней",
+          "type": "number",
+          "min": 7,
+          "max": 730,
+          "default": 180
+        },
+        {
+          "key": "confirmationDeadlineHours",
+          "label": "Дедлайн подтверждения, часов до визита",
+          "type": "number",
+          "min": 1,
+          "max": 48,
+          "default": 4
+        }
+      ]
+    },
+    {
+      "id": "handoff",
+      "file": "integration.json",
+      "path": "handoff",
+      "title": "Передача администратору",
+      "hint": "Куда бот передаёт разговор живому человеку и куда шлёт уведомления владельцу. Telegram подключается кнопкой выше — токен и номер чата панель сохраняет сама.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "autonomous",
+          "label": "Бот работает сам, без администратора",
+          "type": "bool",
+          "default": true,
+          "hint": "Включено: бот доводит запись до конца сам и никогда не обещает клиенту звонок администратора. Выключите, если хотите, чтобы сложные вопросы уходили человеку."
+        },
+        {
+          "key": "managerName",
+          "label": "Главный менеджер",
+          "type": "text",
+          "placeholder": "Alex"
+        },
+        {
+          "key": "managerWhatsapp",
+          "label": "WhatsApp менеджера",
+          "type": "text",
+          "placeholder": "+598 99000101",
+          "hint": "Сюда бот пишет, когда передаёт разговор человеку. Основной канал эскалации."
+        },
+        {
+          "key": "adminName",
+          "label": "Имя администратора",
+          "type": "text",
+          "placeholder": "Alex"
+        },
+        {
+          "key": "adminWhatsapp",
+          "label": "WhatsApp администратора",
+          "type": "text",
+          "placeholder": "+598 99000101"
+        },
+        {
+          "key": "adminEmail",
+          "label": "Email для уведомлений",
+          "type": "text",
+          "placeholder": "salon@example.com"
+        },
+        {
+          "key": "telegramChatId",
+          "label": "Telegram chat ID",
+          "type": "hidden"
+        },
+        {
+          "key": "telegramBotToken",
+          "label": "Telegram bot token",
+          "type": "hidden"
+        },
+        {
+          "key": "escalateOnCalendarError",
+          "label": "Эскалировать при ошибке календаря",
+          "type": "bool",
+          "default": true,
+          "showIf": {
+            "autonomous": false
+          }
+        },
+        {
+          "key": "escalateOnUnknownIntent",
+          "label": "Эскалировать при непонятном запросе",
+          "type": "bool",
+          "default": true,
+          "showIf": {
+            "autonomous": false
+          }
+        },
+        {
+          "key": "handoffMessage",
+          "label": "Сообщение клиенту при передаче",
+          "type": "textarea",
+          "default": "Передаю ваш вопрос администратору — с вами свяжутся в WhatsApp в ближайшее время.",
+          "showIf": {
+            "autonomous": false
+          }
+        },
+        {
+          "key": "handoffMessageEs",
+          "label": "То же по-испански",
+          "type": "textarea",
+          "hint": "Пусто — клиенту уйдёт наш перевод, а не русский текст.",
+          "showIf": {
+            "autonomous": false
+          }
+        },
+        {
+          "key": "handoffMessageEn",
+          "label": "То же по-английски",
+          "type": "textarea",
+          "showIf": {
+            "autonomous": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "notificationsInternal",
+      "file": "integration.json",
+      "path": "notifications",
+      "title": "Внутренние уведомления",
+      "hint": "Кому из своих сообщать о новых записях: владельцу, администраторам и мастерам. Telegram привязывается кнопкой — ключей вводить не нужно.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "ownerProvider",
+          "label": "Провайдер для владельца",
+          "type": "select",
+          "default": "console",
+          "hint": "Telegram проставляется сам при подключении чата на вкладке «Передача администратору».",
+          "options": [
+            {
+              "value": "telegram",
+              "label": "Telegram"
+            },
+            {
+              "value": "twilio",
+              "label": "Twilio"
+            },
+            {
+              "value": "email",
+              "label": "Email (SMTP)"
+            },
+            {
+              "value": "console",
+              "label": "Только лог"
+            }
+          ]
+        },
+        {
+          "key": "smtpHost",
+          "label": "SMTP host",
+          "type": "text",
+          "showIf": {
+            "ownerProvider": "email"
+          },
+          "placeholder": "smtp.example.com"
+        },
+        {
+          "key": "smtpPort",
+          "label": "SMTP port",
+          "type": "number",
+          "default": 587,
+          "min": 1,
+          "max": 65535,
+          "showIf": {
+            "ownerProvider": "email"
+          }
+        },
+        {
+          "key": "smtpSecurity",
+          "label": "Защита SMTP",
+          "type": "select",
+          "default": "starttls",
+          "showIf": {
+            "ownerProvider": "email"
+          },
+          "options": [
+            {
+              "value": "starttls",
+              "label": "STARTTLS"
+            },
+            {
+              "value": "ssl",
+              "label": "SSL/TLS"
+            },
+            {
+              "value": "plain",
+              "label": "Без шифрования"
+            }
+          ]
+        },
+        {
+          "key": "smtpUsername",
+          "label": "SMTP пользователь",
+          "type": "text",
+          "showIf": {
+            "ownerProvider": "email"
+          }
+        },
+        {
+          "key": "smtpPassword",
+          "label": "SMTP пароль",
+          "type": "secret",
+          "showIf": {
+            "ownerProvider": "email"
+          }
+        },
+        {
+          "key": "smtpFrom",
+          "label": "Email отправителя",
+          "type": "text",
+          "showIf": {
+            "ownerProvider": "email"
+          },
+          "placeholder": "booking@example.com"
+        },
+        {
+          "key": "ownerPhone",
+          "label": "Телефон владельца",
+          "type": "text",
+          "showIf": {
+            "ownerProvider": "twilio"
+          },
+          "placeholder": "+598 99000101"
+        },
+        {
+          "key": "ownerTemplate",
+          "label": "Текст владельцу о новой записи",
+          "type": "textarea",
+          "placeholder": "Новая запись: {{name}}, {{service}}, {{date}} в {{time}}. Мастер: {{master}}. Телефон: {{phone}}."
+        },
+        {
+          "key": "dailyDigest",
+          "label": "Утренняя сводка владельцу",
+          "type": "bool",
+          "default": true,
+          "hint": "Раз в день: записи на сегодня, кто не подтвердил визит, сколько часов свободно и что было вчера."
+        },
+        {
+          "key": "digestAt",
+          "label": "Время сводки",
+          "type": "time",
+          "default": "08:00",
+          "showIf": {
+            "dailyDigest": true
+          },
+          "hint": "По часам салона. Если сервис в это время был недоступен, сводка уйдёт позже, но не больше чем через три часа — вечером она уже не нужна."
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "file": "integration.json",
+      "path": "notifications",
+      "title": "Клиентские уведомления",
+      "hint": "Подтверждение сразу после записи, напоминание накануне и в день визита. Отправляет отдельный воркер, а не диалог.",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "enabled",
+          "label": "Включить уведомления",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "provider",
+          "label": "Провайдер для клиента",
+          "type": "select",
+          "default": "console",
+          "options": [
+            {
+              "value": "console",
+              "label": "Только лог (без отправки)"
+            },
+            {
+              "value": "twilio",
+              "label": "Twilio — WhatsApp и SMS"
+            }
+          ],
+          "hint": "console — безопасный режим для проверки сценария."
+        },
+        {
+          "key": "clientChannel",
+          "label": "Канал клиента",
+          "type": "select",
+          "default": "whatsapp",
+          "options": [
+            {
+              "value": "whatsapp",
+              "label": "WhatsApp"
+            },
+            {
+              "value": "sms",
+              "label": "SMS"
+            }
+          ]
+        },
+        {
+          "key": "language",
+          "label": "Язык сообщений клиенту",
+          "type": "select",
+          "default": "ru",
+          "hint": "Один на весь салон: язык клиента в записи не хранится, а утверждённый WhatsApp-шаблон всегда на одном языке.",
+          "options": [
+            {
+              "value": "ru",
+              "label": "Русский"
+            },
+            {
+              "value": "es",
+              "label": "Español"
+            },
+            {
+              "value": "en",
+              "label": "English"
+            }
+          ]
+        },
+        {
+          "key": "smsFallback",
+          "label": "SMS, если WhatsApp не дошёл",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "dayBeforeAt",
+          "label": "Напоминание накануне, время",
+          "type": "time",
+          "default": "19:00"
+        },
+        {
+          "key": "sameDayHours",
+          "label": "Напоминание в день визита, часов до",
+          "type": "number",
+          "default": 3,
+          "min": 1,
+          "max": 12
+        },
+        {
+          "key": "sameDayNotBefore",
+          "label": "Не раньше",
+          "type": "time",
+          "default": "09:00",
+          "hint": "Запись в 10 утра не должна разбудить клиента в 7."
+        },
+        {
+          "key": "reviewAfterHours",
+          "label": "Просьба об оценке, часов после визита",
+          "type": "number",
+          "default": 2,
+          "hint": "Отсчёт от конца визита. Позже 21:00 просьба уходит утром следующего дня."
+        },
+        {
+          "key": "confirmationTemplate",
+          "label": "Текст подтверждения клиенту",
+          "type": "textarea",
+          "placeholder": "Здравствуйте, {{name}}! Ваша запись на {{service}} подтверждена: {{date}} в {{time}}, {{address}}."
+        },
+        {
+          "key": "reminderDayBeforeTemplate",
+          "label": "Текст напоминания накануне",
+          "type": "textarea",
+          "placeholder": "Напоминаем: завтра, {{date}}, в {{time}} у вас запись на {{service}} — {{address}}."
+        },
+        {
+          "key": "reminderTodayTemplate",
+          "label": "Текст напоминания в день визита",
+          "type": "textarea",
+          "placeholder": "Напоминаем: сегодня в {{time}} у вас запись на {{service}}. Ждём вас: {{address}}."
+        }
+      ]
+    },
+    {
+      "id": "notificationsTwilio",
+      "file": "integration.json",
+      "path": "notifications",
+      "title": "Twilio — WhatsApp и SMS",
+      "hint": "Учётная запись для сообщений клиентам. Что и когда писать — на экране «Клиентские уведомления».",
+      "kind": "object",
+      "fields": [
+        {
+          "key": "twilioAccountSid",
+          "label": "Twilio Account SID",
+          "type": "hidden",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "twilioAuthToken",
+          "label": "Twilio Auth Token",
+          "type": "hidden",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "twilioWhatsappFrom",
+          "label": "Twilio WhatsApp-номер",
+          "type": "hidden",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "twilioSmsFrom",
+          "label": "Twilio SMS-номер",
+          "type": "hidden",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "statusCallbackUrl",
+          "label": "URL для статусов доставки",
+          "type": "text",
+          "placeholder": "https://ваш-домен/api/notifications/twilio-status",
+          "hint": "Twilio сообщит сюда, дошло ли сообщение."
+        },
+        {
+          "key": "manageButtonTemplates",
+          "label": "В шаблонах есть кнопка «Перенести или отменить»",
+          "type": "bool",
+          "default": false,
+          "hint": "Включать только после того, как Meta одобрила пересозданные шаблоны подтверждения и напоминаний с кнопкой. Пока стоит старая версия шаблона, включённая кнопка ломает отправку: у сообщения оказывается лишняя переменная."
+        },
+        {
+          "key": "contentSidConfirmation",
+          "label": "Content SID: подтверждение (es)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidConfirmationRu",
+          "label": "Content SID: подтверждение (ru)",
+          "type": "text",
+          "hint": "Шаблон на языке клиента. Пусто — уйдёт испанский."
+        },
+        {
+          "key": "contentSidConfirmationEn",
+          "label": "Content SID: подтверждение (en)",
+          "type": "text"
+        },
+        {
+          "key": "contentSidReminderDayBefore",
+          "label": "Content SID: напоминание накануне (es)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidReminderDayBeforeRu",
+          "label": "Content SID: напоминание накануне (ru)",
+          "type": "text",
+          "hint": "Шаблон на языке клиента. Пусто — уйдёт испанский."
+        },
+        {
+          "key": "contentSidReminderDayBeforeEn",
+          "label": "Content SID: напоминание накануне (en)",
+          "type": "text"
+        },
+        {
+          "key": "contentSidReminderToday",
+          "label": "Content SID: напоминание в день визита (es)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidReminderTodayRu",
+          "label": "Content SID: напоминание в день визита (ru)",
+          "type": "text",
+          "hint": "Шаблон на языке клиента. Пусто — уйдёт испанский."
+        },
+        {
+          "key": "contentSidReminderTodayEn",
+          "label": "Content SID: напоминание в день визита (en)",
+          "type": "text"
+        },
+        {
+          "key": "contentSidRescheduled",
+          "label": "Content SID: перенос записи",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          },
+          "hint": "Шаблон без кнопки. Без него подтверждение переноса уходит обычным текстом, а его Meta пропускает только в течение суток после сообщения клиента — то есть почти никогда."
+        },
+        {
+          "key": "contentSidCancelled",
+          "label": "Content SID: отмена записи",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          },
+          "hint": "Шаблон без кнопки: клиенту сообщается, что визита не будет. Кнопка «Перенести или отменить» здесь не нужна — отменять уже нечего."
+        },
+        {
+          "key": "contentSidReviewEs",
+          "label": "Content SID: просьба об оценке (es)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          },
+          "hint": "Эти два сообщения уходят на языке клиента, поэтому шаблон нужен на каждый язык, которым отвечает салон."
+        },
+        {
+          "key": "contentSidReviewRu",
+          "label": "Content SID: просьба об оценке (ru)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidReviewEn",
+          "label": "Content SID: просьба об оценке (en)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidWaitlistEs",
+          "label": "Content SID: освободилось место (es)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          },
+          "hint": "Кнопка шаблона ведёт на публичный адрес сервиса. Сменили домен — шаблон нужно пересоздать."
+        },
+        {
+          "key": "contentSidWaitlistRu",
+          "label": "Content SID: освободилось место (ru)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        },
+        {
+          "key": "contentSidWaitlistEn",
+          "label": "Content SID: освободилось место (en)",
+          "type": "text",
+          "showIf": {
+            "provider": "twilio"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "file": "integration.json",
+      "path": "sales",
+      "title": "Продажи",
+      "kind": "object",
+      "hint": "Бот может один раз мягко предложить дополнение к записи. Без повторов и давления: отказ клиента закрывает тему до конца диалога.",
+      "fields": [
+        {
+          "key": "upsellEnabled",
+          "label": "Предлагать дополнения к услуге",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "key": "upsellMoment",
+          "label": "Когда предлагать",
+          "type": "select",
+          "default": "after_booking",
+          "showIf": {
+            "upsellEnabled": true
+          },
+          "options": [
+            {
+              "value": "after_booking",
+              "label": "После подтверждения записи"
+            },
+            {
+              "value": "on_choice",
+              "label": "При выборе услуги"
+            }
+          ]
+        },
+        {
+          "key": "upsellMaxPerDialog",
+          "label": "Максимум предложений за диалог",
+          "type": "number",
+          "min": 1,
+          "max": 3,
+          "default": 1,
+          "showIf": {
+            "upsellEnabled": true
+          }
+        },
+        {
+          "key": "fillGaps",
+          "label": "Предлагать ближайшее окно, если время занято",
+          "type": "bool",
+          "default": true,
+          "hint": "Клиент просил 15:00, его нет — бот сразу называет два соседних варианта."
+        },
+        {
+          "key": "upsellNote",
+          "label": "Что и как предлагать",
+          "type": "textarea",
+          "showIf": {
+            "upsellEnabled": true
+          },
+          "placeholder": "Например: к окрашиванию — уход Davines, одной фразой, без нажима."
+        }
+      ]
+    }
+  ]
+}
